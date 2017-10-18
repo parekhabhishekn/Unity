@@ -745,6 +745,9 @@ namespace IntegrationTests
 			repositoryManagerListener.DidNotReceive().OnLocksUpdated( Args.EnumerableGitLock );
 
 			result.AssertEqual( expected );
-		}
+
+            repositoryManagerListener.ClearReceivedCalls();
+            repositoryManagerEvents.Reset();
+        }
     }
 }
