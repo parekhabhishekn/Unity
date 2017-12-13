@@ -441,7 +441,7 @@ namespace GitHub.Unity
             return last;
         }
 
-		public ITask<string> Discard( IList<string> files,
+        public ITask<string> Discard( IList<string> files, 
             IOutputProcessor<string> processor = null)
         {
             Logger.Trace("Checkout Files");
