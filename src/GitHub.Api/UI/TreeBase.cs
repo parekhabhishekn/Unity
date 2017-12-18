@@ -30,16 +30,21 @@ namespace GitHub.Unity
 
         public void Load(IEnumerable<TData> treeDatas)
         {
-            var collapsedFolders = new HashSet<string>(GetCollapsedFolders());
-            var selectedNodePath = SelectedNodePath;
-            var checkedFiles = new HashSet<string>(GetCheckedFiles());
+            Load2(treeDatas);
+        }
 
-            Clear();
+        private static void Load2(TreeBase<TNode, TData> tree, IEnumerable<TData> treeDatas)
+        {
+            var collapsedFolders = new HashSet<string>(tree.GetCollapsedFolders());
+            var selectedNodePath = tree.SelectedNodePath;
+            var checkedFiles = new HashSet<string>(tree.GetCheckedFiles());
 
-            var displayRootLevel = DisplayRootNode ? 1 : 0;
+            tree.Clear();
 
-            var isSelected = IsSelectable && selectedNodePath != null && Title == selectedNodePath;
-            AddNode(Title, Title, -1 + displayRootLevel, true, false, false, false, isSelected, false, null);
+            var displayRootLevel = tree.DisplayRootNode ? 1 : 0;
+
+            var isSelected = tree.IsSelectable && selectedNodePath != null && tree.Title == selectedNodePath;
+            tree.AddNode(tree.Title, tree.Title, -1 + displayRootLevel, true, false, false, false, isSelected, false, null);
 
             var hideChildren = false;
             var hideChildrenBelowLevel = 0;
@@ -48,12 +53,12 @@ namespace GitHub.Unity
 
             foreach (var treeData in treeDatas)
             {
-                var parts = treeData.Path.Split(new[] { PathSeparator }, StringSplitOptions.None);
+                var parts = treeData.Path.Split(new[] { tree.PathSeparator }, StringSplitOptions.None);
                 for (var i = 0; i < parts.Length; i++)
                 {
                     var label = parts[i];
                     var level = i + 1;
-                    var nodePath = String.Join(PathSeparator, parts, 0, level);
+                    var nodePath = String.Join(tree.PathSeparator, parts, 0, level);
                     var isFolder = i < parts.Length - 1;
                     var alreadyExists = folders.Contains(nodePath);
                     if (!alreadyExists)
@@ -99,8 +104,8 @@ namespace GitHub.Unity
                         }
 
                         isSelected = selectedNodePath != null && nodePath == selectedNodePath;
-                        AddNode(nodePath, label, i + displayRootLevel, isFolder, isActive, nodeIsHidden,
-                            nodeIsCollapsed, isSelected, isChecked, treeNodeTreeData);
+                        AddNode(nodePath, label, i + displayRootLevel, isFolder, isActive, nodeIsHidden, nodeIsCollapsed,
+                            isSelected, isChecked, treeNodeTreeData);
                     }
                 }
             }
@@ -128,7 +133,7 @@ namespace GitHub.Unity
                             anyChecked = (anyChecked ?? false) || nodeIsChecked;
                         }
 
-                        node.CheckState = anyChecked.Value 
+                        node.CheckState = anyChecked.Value
                             ? (allChecked.Value ? CheckState.Checked : CheckState.Mixed)
                             : CheckState.Empty;
                     }
